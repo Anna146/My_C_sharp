@@ -17,8 +17,10 @@ namespace Mandel
         public Form1()
         {
             InitializeComponent();
+            this.comboBox1.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.comboBox1_MouseWheel);
         }
 
+            
         
             System.Drawing.Pen point, pointR, pointB;
             System.Drawing.Graphics grph;
@@ -64,31 +66,92 @@ namespace Mandel
                                 grph.DrawEllipse(point, (float)((realCoord - lBord) * koefX), (float)((imagCoord - tBord) * koefY), 1, 1);
                                 break;
                             case 1:
-                                grph.DrawEllipse(point, (float)((realCoord - lBord) * koefX), (float)((imagCoord - tBord) * koefY), 2, 2);
+                                grph.DrawEllipse(point, (float)((realCoord - lBord) * koefX), (float)((imagCoord - tBord) * koefY), 5, 5);
                                 break;
                             case 2:
-                                grph.DrawEllipse(pointR, (float)((realCoord - lBord) * koefX), (float)((imagCoord - tBord) * koefY), 2, 2);
+                                grph.DrawEllipse(pointR, (float)((realCoord - lBord) * koefX), (float)((imagCoord - tBord) * koefY), 5, 5);
                                 break;
                             case 3:
-                                grph.DrawEllipse(pointB, (float)((realCoord - lBord) * koefX), (float)((imagCoord - tBord) * koefY), 2, 2);
+                                grph.DrawEllipse(pointB, (float)((realCoord - lBord) * koefX), (float)((imagCoord - tBord) * koefY), 5, 5);
                                 break;
                         }
                     }
                 }
             }
-            //MessageBox.Show("I did points " + R + "-" + L+ " and " + T + "-" + B);
         }
 
-        int thCount = 1;
+        int thCount = 100;
 
         private void pens()
         {
+            switch (this.comboBox4.Text)
+            {
+                case "Green":
+                    point = new System.Drawing.Pen(System.Drawing.Color.Lime);
+                    break;
+                case "Yellow":
+                    point = new System.Drawing.Pen(System.Drawing.Color.Gold);
+                    break;
+                case "Red":
+                    point = new System.Drawing.Pen(System.Drawing.Color.Red);
+                    break;
+                case "Blue":
+                    point = new System.Drawing.Pen(System.Drawing.Color.Blue);
+                    break;
+                case "Black":
+                    point = new System.Drawing.Pen(System.Drawing.Color.Black);
+                    break;
+                default:
+                    point = new System.Drawing.Pen(System.Drawing.Color.Black);
+                    break;
+            }
+        
+            
+            switch (this.comboBox2.Text)
+            {
+                case "Green":
+                    pointR = new System.Drawing.Pen(System.Drawing.Color.Lime);
+                    break;
+                case "Yellow":
+                    pointR = new System.Drawing.Pen(System.Drawing.Color.Gold);
+                    break;
+                case "Red":
+                    pointR = new System.Drawing.Pen(System.Drawing.Color.Red);
+                    break;
+                case "Blue":
+                    pointR = new System.Drawing.Pen(System.Drawing.Color.Blue);
+                    break;
+                case "Black":
+                    pointR = new System.Drawing.Pen(System.Drawing.Color.Black);
+                    break;
+                default:
+                    pointR = new System.Drawing.Pen(System.Drawing.Color.Red);
+                    break;
+            }
 
+            switch (this.comboBox3.Text)
+            {
+                case "Green":
+                    pointB = new System.Drawing.Pen(System.Drawing.Color.Lime);
+                    break;
+                case "Yellow":
+                    pointB = new System.Drawing.Pen(System.Drawing.Color.Gold);
+                    break;
+                case "Red":
+                    pointB = new System.Drawing.Pen(System.Drawing.Color.Red);
+                    break;
+                case "Blue":
+                    pointB = new System.Drawing.Pen(System.Drawing.Color.Blue);
+                    break;
+                case "Black":
+                    pointB = new System.Drawing.Pen(System.Drawing.Color.Black);
+                    break;
+                default:
+                    pointB = new System.Drawing.Pen(System.Drawing.Color.Gold);
+                    break;
+            }
             grph = this.panel1.CreateGraphics();
 
-            point = new System.Drawing.Pen(System.Drawing.Color.Black);
-            pointR = new System.Drawing.Pen(System.Drawing.Color.Red);
-            pointB = new System.Drawing.Pen(System.Drawing.Color.Blue);
 
         }
 
@@ -188,6 +251,48 @@ namespace Mandel
             }
         }
 
+        double inc = 1;
+
+        bool roll = false;
+        double c1 = -0.6;
+        double c2 = 1.77;
+        double c3 = -1.2;
+        double c4 = 1.2;
+
+
+        private void comboBox1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            //MessageBox.Show("works!!");
+            pic.Width = 0;
+            pic.Height = 0;
+            inc = e.Delta < 0 ? (1.25) : (0.75);
+            pic.Visible = false;
+            if (c1 * inc > -0.6 && c2 * inc < 1.77 && c3 * inc > -1.6 && c4 * inc < 1.6)
+            {
+                roll = true;
+                //Rectangle rec = new Rectangle(begin_x, begin_y, e.X - begin_x, e.Y - begin_y);
+                grph.Clear(Color.White);
+                picture(c1 * inc, c2 * inc, c3 * inc, c4 * inc);
+                c1 = c1 * inc;
+                c2 = c2 * inc;
+                c3 = c3 * inc;
+                c4 = c4 * inc;
+                inc = 1;
+            }
+            else
+            {
+                roll = true;
+                inc = 1;
+                c1 = -0.6;
+                c2 = 1.77;
+                c3 = -1.2;
+                c4 = 1.2;
+                grph.Clear(Color.White);
+                picture(c1 / inc, c2 / inc, c3 / inc, c4 / inc);
+            }
+            resize = false;
+        }
+
 
 
         private void onUp(object sender, MouseEventArgs e)
@@ -203,17 +308,77 @@ namespace Mandel
                     //this.splitContainer1.Panel1.BackgroundImage = Copy(this.splitContainer1.Panel1.BackgroundImage, rec);
                     grph.Clear(Color.White);
                     //picture(-0.6, 1.77, -1.2, 1.2);
+                    c1 = begin_x / koefX + lBord;
+                    c2 = e.X / koefX + lBord;
+                    c3 = begin_y / koefY + tBord;
+                    c4 = e.Y / koefY + tBord;
+                    inc = 1;
+                    grph.Clear(Color.White);
                     picture(begin_x / koefX + lBord, e.X / koefX + lBord, begin_y / koefY + tBord, e.Y / koefY + tBord);
                 }
             }
             resize = false;
+            this.Activate();
+        }
+
+        void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             grph.Clear(Color.White);
             picture(-0.6, 1.77, -1.2, 1.2);
+            roll = false;
+            inc = 1;
+            c1 = -0.6;
+            c2 = 1.77;
+            c3 = -1.2;
+            c4 = 1.2;
+            this.comboBox1.Focus();
         }
 
+        private void comboBox1_TextChanged(object sender, EventArgs e)
+        {
+            grph.Clear(Color.White);
+            picture(-0.6, 1.77, -1.2, 1.2);
+        }
+
+
+        private void comboBox2_TextChanged_1(object sender, EventArgs e)
+        {
+            grph.Clear(Color.White);
+            picture(-0.6, 1.77, -1.2, 1.2);
+        }
+
+        private void comboBox3_TextChanged_1(object sender, EventArgs e)
+        {
+            grph.Clear(Color.White);
+            picture(-0.6, 1.77, -1.2, 1.2);
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            String text = textBox1.Text;
+            int cnt;
+            if (int.TryParse(text, out cnt) == false)
+            {
+                MessageBox.Show("Invalid number of threads!");
+                textBox1.Text = thCount.ToString();
+            }
+            if (cnt >= 1 && cnt <= 1000)
+            {
+                thCount = cnt;
+                grph.Clear(Color.White);
+                picture(-0.6, 1.77, -1.2, 1.2);
+            }
+            else
+            {
+                MessageBox.Show("Invalid number of threads!");
+                textBox1.Text = thCount.ToString();
+            }
+            this.comboBox1.Focus();
+        }
     }
 }
