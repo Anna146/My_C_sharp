@@ -94,8 +94,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.label3);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
-            this.splitContainer1.Size = new System.Drawing.Size(350, 197);
-            this.splitContainer1.SplitterDistance = 227;
+            this.splitContainer1.Size = new System.Drawing.Size(468, 338);
+            this.splitContainer1.SplitterDistance = 303;
             this.splitContainer1.TabIndex = 2;
             // 
             // textBox5
@@ -190,7 +190,7 @@
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.listBox1);
             this.panel1.Controls.Add(this.label7);
-            this.panel1.Location = new System.Drawing.Point(369, 48);
+            this.panel1.Location = new System.Drawing.Point(491, 48);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(96, 129);
             this.panel1.TabIndex = 3;
@@ -241,7 +241,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(477, 278);
+            this.ClientSize = new System.Drawing.Size(596, 399);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.draw);

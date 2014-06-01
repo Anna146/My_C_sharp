@@ -55,6 +55,11 @@ namespace Algebra
             return new Real() { number = one.number + two.number };
         }
 
+        public void setDoubleValue(Double val)
+        {
+            this.number = val;
+        }
+
         public static Real operator -(Real one, Real two)
         {
             return new Real()
@@ -71,15 +76,16 @@ namespace Algebra
             };
         }
 
-        public static implicit operator Real(double num)
+
+        public static Real operator /(Real one, Real two)
         {
             return new Real()
             {
-                number = num
+                number = one.number / two.number
             };
         }
 
-        public static Real operator /(Real one, Real two)
+        public Real Div(Real one, Real two)
         {
             return new Real()
             {
@@ -137,6 +143,11 @@ namespace Algebra
             return new Real(this + (Real)other);
         }
 
+        public Real Div(INumber<Real> other)
+        {
+            return new Real(this / (Real)other);
+        }
+
         public Real Sub(INumber<Real> other)
         {
             return this - (Real)other;
@@ -145,11 +156,6 @@ namespace Algebra
         public Real Mul(INumber<Real> other)
         {
             return this * (Real)other;
-        }
-
-        void setDoubleValue(Double val)
-        {
-            number = val;
         }
 
         public Real Neg()

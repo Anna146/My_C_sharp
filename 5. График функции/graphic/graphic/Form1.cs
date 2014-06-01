@@ -17,7 +17,8 @@ namespace graphic
         double xRl, yRl, xRu, yRu;
 
         double stepX, stepY;
-
+        System.Drawing.Graphics grph;
+        
         float wid, hei;
 
         float leBord, rBord, uBord, loBord;
@@ -29,18 +30,32 @@ namespace graphic
         }
 
         PictureBox pic = new PictureBox();
+        //Rectangle rec = new Rectangle();
         private int begin_x;
         private int begin_y;
         bool resize = false;
+        
+
+
+        private void makeCanvas() 
+        {
+            Pen point = new System.Drawing.Pen(System.Drawing.Color.Black);
+            grph = this.splitContainer1.Panel1.CreateGraphics();
+            draw_axes(grph, point);
+            point.Dispose();
+        }
 
 
         private void Form1_Load(object sender, EventArgs e)
         {
             pic.Parent = splitContainer1.Panel1;
             pic.BackColor = Color.Transparent;
+            pic.BackgroundImage = null;
             pic.SizeMode = PictureBoxSizeMode.AutoSize;
             pic.BorderStyle = BorderStyle.FixedSingle;
             pic.Visible = false;
+            counts();
+            makeCanvas();
         }
 
         private void draw_axes(System.Drawing.Graphics grph, System.Drawing.Pen pen)
@@ -58,8 +73,9 @@ namespace graphic
             {
                 grph.DrawLine(pen, wid / 2 - 3, (float)i, wid / 2 + 3, (float)i);
                 if (!((i - hei / 2) == 0))
-                    grph.DrawString((yRu - i/stepY).ToString("f2"), this.Font, br, wid / 2 - 25, (float)i);
+                    grph.DrawString((yRu - i/stepY).ToString("f2"), this.Font, br, wid / 2 - 35, (float)i);
             }
+            br.Dispose();
         }
 
         private Pen penStyle()
@@ -85,27 +101,31 @@ namespace graphic
             return p;
         }
 
-        System.Drawing.Graphics grph;
+        string func = "";
+
         //System.Drawing.Drawing2D.GraphicsState saveGr;
 
         private void makeGraph(object sender)
         {
-            if (textBox1.Text != "" && sender == this.draw)
+            if (func != "" && sender == this.draw)
             {
-                String expr = this.textBox1.Text;
+                String expr = func;
                 System.Drawing.Pen point;
                 point = new System.Drawing.Pen(System.Drawing.Color.Black);
-                grph = this.splitContainer1.Panel1.CreateGraphics();
-                draw_axes(grph, point);
+                //grph = this.splitContainer1.Panel1.CreateGraphics();
+                makeCanvas();
+                //draw_axes(grph, point);
                 point = penStyle();
                 float y, xp = float.NaN, yp = float.NaN;
+                float eps = 0;//hei/1000000;
 
-
-                for (double i = 0; i < wid; i += wid / 1000)
+                for (double i = 0; i < wid; i += wid / 5000)
                 {
                     y = (float)(cl.Calculator(expr, (xRl + i/stepX)));
-                    if (!xp.Equals(float.NaN) && !(yp.Equals(float.NegativeInfinity)) && !(yp.Equals(float.PositiveInfinity)))
-                        grph.DrawLine(point, xp, (float)(yRu - yp) * (float)stepY, (float)i, ((float)yRu  - y) * (float)stepY);
+                    if (!xp.Equals(float.NaN) && !(((y < (float)yRl + eps) || (yp > (float)yRu - eps)) || ((yp < (float)yRl + eps) || (y > (float)yRu - eps))))
+                    {
+                        grph.DrawLine(point, xp, (float)(yRu - yp) * (float)stepY, (float)i, ((float)yRu - y) * (float)stepY);
+                    }
                     xp = (float)i;
                     yp = y;
                 }
@@ -120,7 +140,7 @@ namespace graphic
             makeGraph(sender);
         }
 
-        private void draw_Click(object sender, EventArgs e)
+        private void counts()
         {
             xRl = double.Parse(textBox2.Text);
             xRu = double.Parse(textBox3.Text);
@@ -132,8 +152,26 @@ namespace graphic
             rBord = this.splitContainer1.Panel1.Bounds.Right;
             uBord = this.splitContainer1.Panel1.Bounds.Top;
             loBord = this.splitContainer1.Panel1.Bounds.Bottom;
-            stepX = wid / (Math.Abs(xRl-xRu));
-            stepY = hei / (Math.Abs(yRl-yRu));
+            stepX = wid / (Math.Abs(xRl - xRu));
+            stepY = hei / (Math.Abs(yRl - yRu));
+        }
+
+        private void draw_Click(object sender, EventArgs e)
+        {
+            func = textBox1.Text;
+            xRl = double.Parse(textBox2.Text);
+            xRu = double.Parse(textBox3.Text);
+            yRl = double.Parse(textBox4.Text);
+            yRu = double.Parse(textBox5.Text);
+            wid = this.splitContainer1.Panel1.Width;
+            hei = this.splitContainer1.Panel1.Height;
+            leBord = this.splitContainer1.Panel1.Bounds.Left;
+            rBord = this.splitContainer1.Panel1.Bounds.Right;
+            uBord = this.splitContainer1.Panel1.Bounds.Top;
+            loBord = this.splitContainer1.Panel1.Bounds.Bottom;
+            stepX = wid / (Math.Abs(xRl - xRu));
+            stepY = hei / (Math.Abs(yRl - yRu));
+
             makeGraph(sender);
         }
 
@@ -149,15 +187,22 @@ namespace graphic
 
         }
 
+              
 
 
         private void onMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
+                System.Drawing.Pen recPen;
+                recPen = new System.Drawing.Pen(System.Drawing.Color.Black);
                 pic.Width = e.X - begin_x;
                 pic.Height = e.Y - begin_y;
+                //makeGraph(this.draw);
+                //if ((e.X - begin_x > 0) && (e.Y - begin_y > 0))
+                    //grph.DrawRectangle(recPen, begin_x, begin_y, e.X - begin_x, e.Y - begin_y);
                 //grph.Restore(saveGr);
+                //saveGr = grph.Save();
             }
 
         }
@@ -174,6 +219,7 @@ namespace graphic
                 pic.Height = 0;
                 pic.Visible = true;
                 resize = true;
+                //saveGr = grph.Save();
             }
         }
 
@@ -193,10 +239,10 @@ namespace graphic
                     Rectangle rec = new Rectangle(begin_x, begin_y, e.X - begin_x, e.Y - begin_y);
                     //this.splitContainer1.Panel1.BackgroundImage = Copy(this.splitContainer1.Panel1.BackgroundImage, rec);
 
-                    xRl = (int)(xRl + (begin_x - leBord)/stepX);
-                    xRu = (int)(xRu - ( - e.X + rBord) / stepX);
-                    yRu = -(int)(yRl + (begin_y - uBord) / stepY);
-                    yRl = -(int)(yRu - ( -e.Y + loBord) / stepY);
+                    xRl = (int)(xRl + (float)begin_x / (float)stepX);
+                    xRu = -(int)(xRu + (- e.X) / stepX);
+                    yRu = (int)(yRu - begin_y / stepY);
+                    yRl = -(int)(yRl + e.Y / stepY);
                     stepX = wid / (Math.Abs(xRl-xRu));
                     stepY = hei / (Math.Abs(yRl-yRu));
                     makeGraph(this.draw);
@@ -208,5 +254,7 @@ namespace graphic
         }
 
 
+
+        
     }
 }

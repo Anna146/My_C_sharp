@@ -17,7 +17,6 @@ namespace Algebra
 
         Q Mul(elem other);
 
-        Q Div(elem other);
 
         void printer();
     }

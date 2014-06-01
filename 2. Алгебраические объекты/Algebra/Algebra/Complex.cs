@@ -143,6 +143,11 @@ namespace Algebra
             return this - (Complex)other;
         }
 
+        public Complex Div(INumber<Complex> other)
+        {
+            return new Complex(this.accRe / ((Complex)other).accRe);
+        }
+
         public Complex Mul(INumber<Complex> other)
         {
             return this * (Complex)other;
@@ -156,7 +161,7 @@ namespace Algebra
             return tmp;
         }
 
-        void setDoubleValue(Double val)
+        public void setDoubleValue(Double val)
         {
             re = val;
             im = 0;
